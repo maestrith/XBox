@@ -1,9 +1,10 @@
 #SingleInstance,Force
 #Persistent
+DetectHiddenWindows,On
 SetBatchLines,-1
 CoordMode,Mouse,Screen
 global settings,program,v:=[]
-settings:=new xml("settings")
+settings:=new xml("settings"),v.gui:=[]
 new xbox(0)
 xbox.edit()
 Gui()
@@ -129,13 +130,14 @@ class xbox{
 		}
 		return
 	}
-	ks(info){
+	ks(info){ ;#[Class XBox]
 		while,ii:=info.item[A_Index-1],ea:=xml.ea(ii){
 			name:=ea.center?ea.center:ea.name
-			if(value:=xbox.buttons[name])
+			if(value:=xbox.buttonstate&xbox.buttons[name])
 				return xbox.buttonstate&value?name:""
-			else if(NumGet(xbox.currentstate,xbox.triggers[name],"uchar")/255*10>2?1:0)
-				return NumGet(xbox.currentstate,value,"uchar")/255*10>2?name:0
+			if(xbox.triggers[name])
+				if(NumGet(xbox.currentstate,xbox.triggers[name],"uchar")/255*10>2?1:0)
+					return NumGet(xbox.currentstate,value,"uchar")/255*10>2?name:0
 		}
 	}
 	edit(msg,func,type*){
@@ -239,6 +241,9 @@ Exit(){
 	select.SetAttribute("select",1),tv:=settings.sn("//*[@tv!='']")
 	while,tt:=tv.item[A_Index-1]
 		tt.RemoveAttribute("tv")
+	WinGetPos,x,y,,,% hwnd([1])
+	if(pos:=winpos()).w
+		settings.Add("gui",{pos:"x" x " y" y " w" pos.w " h" pos.h})
 	settings.save(1)
 	ExitApp
 	return
@@ -257,21 +262,14 @@ Export(){
 Gui(){
 	static
 	Gui,Color,0xCCCCCC,0xCCCCCC
-	Gui,Add,ListView,w200 h500 glv AltSubmit,Profile
-	LV_Update()
-	Gui,+hwndmain
-	hwnd(1,main)
+	Gui,+hwndmain +Resize
+	hwnd(1,main),OnMessage(5,"Resize")
 	Hotkey,IfWinActive,% hwnd([1])
 	for a,b in {"+Escape":"Exit",Delete:"Delete","+Delete":"Delete"}
 		Hotkey,%a%,%b%,On
-	Gui,Menu,% Menu("Main")
-	Gui,Add,TreeView,x+5 w250 h500 gtv
-	Gui,Add,Hotkey,xm vhotkey gadd
-	Gui,Add,Edit,x+5 guphot w200 vuphot
-	Gui,Add,Button,xm w455 gadd Default,Add
-	Gui,Add,Button,w455 gstart,&Start
-	Gui,Show
-	lv(1)
+	newwin:=new GuiKeep(1,["ListView,w200 h500 glv AltSubmit,Profile,h","TreeView,x+5 w250 h500 gtv AltSubmit,,wh","Hotkey,xm vhotkey gadd,,y","Edit,x+5 guphot w200 vuphot,,wy","Button,xm w455 gadd Default,Add,wy","Button,w455 gstart,&Start,wy"],"main")
+	LV_Update(),lv(1)
+	Gui,Show,% settings.ssn("//gui/@pos").text
 	return
 	start:
 	if(A_GuiControl="&start"){
@@ -285,13 +283,16 @@ Gui(){
 	}
 	return
 	add:
-	Gui,Submit,Nohide
+	var:=newwin[]
+	for a,b in var
+		m(a,b)
+	m("Fix this")
 	ControlGetFocus,Focus,% hwnd([1])
 	if(Focus="Edit1"||focus="msctls_hotkey321"){
-		if !RegExMatch(hotkey,"\w")
+		if !RegExMatch(var.hotkey,"\w")
 			return
 		xbox.edit("Press a Button, Trigger, or Axis","add_keypress","Buttons","Axis","Triggers")
-		v.hotkey:=hotkey
+		v.hotkey:=var.hotkey
 		return
 	}
 	return
@@ -341,8 +342,8 @@ Import(filename:=""){
 		Import(b)
 	return
 }
-lv(lv*){
-	if(lv.1=2){
+lv(lv){
+	if(lv=2){
 		while,next:=TV_GetNext(next,"F"){
 			node:=ssn(program,"descendant::*[@tv='" next "']")
 			if(TV_Get(next,"Expand"))
@@ -351,7 +352,7 @@ lv(lv*){
 				node.RemoveAttribute("expand")
 		}
 	}
-	if(A_GuiEvent="I"||lv.1){
+	if(A_GuiEvent="I"||lv=2||lv=1){
 		GuiControl,1:-Redraw,SysTreeView321
 		TV_Delete(),LV_GetText(text,LV_GetNext()),program:=settings.ssn("//game[@name='" text "']"),list:=sn(program,"descendant-or-self::*")
 		while,ll:=list.item[A_Index-1],ea:=xml.ea(ll){
@@ -644,7 +645,7 @@ tv(info){
 		lv(2)
 		return
 	}
-	if(A_GuiEvent="DoubleClick"){
+	if(A_GuiEvent="RightClick"){
 		node:=settings.ssn("//*[@tv='" A_EventInfo "']"),ea:=xml.ea(node)
 		if(node.nodename="read"){
 			node.SetAttribute("Read",switch[ea.read]?switch[ea.read]:"LThumb")
@@ -677,3 +678,74 @@ tv(info){
 
 ;add { with text after it and { is at the begining of the line
 ;-make {`n`toldtext`n}
+Class GuiKeep{
+	static keep:=[]
+	__New(win,info,menu){
+		static
+		con:=[]
+		for a,b in {border:32,caption:4}{
+			SysGet,%a%,%b%
+			this[a]:=%a%
+		}
+		for a,b in info{
+			opt:=StrSplit(b,","),RegExMatch(opt.2,"iO)\bv(\w+)",found)
+			if(found.1)
+				this.var[found.1]:=1
+			Gui,Add,% opt.1,% opt.2 " hwndhwnd",% opt.3
+			if(opt.4){
+				ControlGetPos,x,y,w,h,,ahk_id%hwnd%
+				for a,b in {x:x,y:y,w:w,h:h}
+					con[hwnd,a]:=b-(a="x"?this.border*2:a="y"?(this.caption+this.border):a="h"?this.border:0)
+				con[hwnd,"pos"]:=opt.4
+			}
+		}
+		Gui,%win%:Menu,% Menu(menu)
+		Gui,Show,Hide
+		this.win:=win,pos:=winpos()
+		WinGetPos,xx,yy,,,% hwnd([1])
+		VarSetCapacity(size,16,0),DllCall("GetClientRect","uint",hwnd(win),"uint",&size),w:=NumGet(size,8),h:=NumGet(size,12)
+		flip:={x:"w",y:"h"}
+		for control,b in con{
+			obj:=this.gui[control]:=[]
+			for c,d in StrSplit(b.pos){
+				if(d~="w|h")
+					obj[d]:=b[d]-%d%
+				if(d~="x|y")
+					val:=flip[d],obj[d]:=b[d]-%val%
+			}
+		}
+		GuiKeep.keep[win]:=this
+	}
+	__Get(){
+		Gui,% this.win ":Submit",Nohide
+		m(hotkey)
+		for a,b in this.var
+			this.var[a]:=%a%
+		return this.var
+	}
+	current(win){
+		return GuiKeep.keep[win]
+	}
+}
+Resize(a,b){
+	static width,height
+	info:=GuiKeep.current(A_Gui)
+	if(b>>16)
+		height:=b>>16?b>>16:height,width:=b&0xffff?b&0xffff:width
+	static flip:={x:"w",y:"h"}
+	for a,b in info.gui{
+		for c,d in b{
+			if(c~="y|h")
+				GuiControl,MoveDraw,%a%,% c height+d
+			else
+				GuiControl,MoveDraw,%a%,% c width+d
+		}
+	}
+}
+Winpos(){
+	VarSetCapacity(rect,16),DllCall("GetClientRect",ptr,hwnd(1),ptr,&rect)
+	return {w:NumGet(rect,8),h:NumGet(rect,12)}
+}
+Add_Radius_Constraint(){
+	top:=Top(),Deselect(),settings.under(top,"Radius",{Center:"RightThumb",Dead:1,Distance:5,Read:"RThumb",select:1,X:A_ScreenWidth/2,Y:A_ScreenHeight/2}),lv(2)
+}
