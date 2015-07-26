@@ -265,7 +265,7 @@ Gui(){
 	Gui,+hwndmain +Resize
 	hwnd(1,main),OnMessage(5,"Resize")
 	Hotkey,IfWinActive,% hwnd([1])
-	for a,b in {"+Escape":"Exit",Delete:"Delete","+Delete":"Delete"}
+	for a,b in {"+Escape":"Exit",Delete:"Delete","+Delete":"Delete","^Up":"move","^Down":"move","^Left":"move","^Right":"move"}
 		Hotkey,%a%,%b%,On
 	newwin:=new GuiKeep(1,["ListView,w200 h500 glv AltSubmit,Profile,h","TreeView,x+5 w250 h500 gtv AltSubmit,,wh","Hotkey,xm vhotkey gadd,,y","Edit,x+5 guphot w200 vuphot,,wy","Button,xm w455 gadd Default,Add,wy","Button,w455 gstart,&Start,wy"],"main")
 	LV_Update(),lv(1)
@@ -284,21 +284,17 @@ Gui(){
 	return
 	add:
 	var:=newwin[]
-	for a,b in var
-		m(a,b)
-	m("Fix this")
 	ControlGetFocus,Focus,% hwnd([1])
 	if(Focus="Edit1"||focus="msctls_hotkey321"){
 		if !RegExMatch(var.hotkey,"\w")
 			return
-		xbox.edit("Press a Button, Trigger, or Axis","add_keypress","Buttons","Axis","Triggers")
 		v.hotkey:=var.hotkey
-		return
+		xbox.edit("Press a Button, Trigger, or Axis","add_keypress","Buttons","Axis","Triggers")
 	}
 	return
 	uphot:
 	Gui,Submit,Nohide
-	GuiControl,,msctls_hotkey321,%uphot%
+	GuiControl,,msctls_hotkey321,% newwin[].uphot
 	return
 }
 hwnd(win,hwnd=""){
@@ -680,7 +676,7 @@ tv(info){
 ;-make {`n`toldtext`n}
 Class GuiKeep{
 	static keep:=[]
-	__New(win,info,menu){
+	__New(win,info="",menu=""){
 		static
 		con:=[]
 		for a,b in {border:32,caption:4}{
@@ -691,7 +687,7 @@ Class GuiKeep{
 			opt:=StrSplit(b,","),RegExMatch(opt.2,"iO)\bv(\w+)",found)
 			if(found.1)
 				this.var[found.1]:=1
-			Gui,Add,% opt.1,% opt.2 " hwndhwnd",% opt.3
+			hwnd:=this.add(opt)
 			if(opt.4){
 				ControlGetPos,x,y,w,h,,ahk_id%hwnd%
 				for a,b in {x:x,y:y,w:w,h:h}
@@ -716,12 +712,20 @@ Class GuiKeep{
 		}
 		GuiKeep.keep[win]:=this
 	}
+	add(opt:=""){
+		static
+		if(!opt){
+			var:=[]
+			Gui,% this.win ":Submit",Nohide
+			for a,b in this.var
+				var[a]:=%a%
+			return var
+		}
+		Gui,Add,% opt.1,% opt.2 " hwndhwnd",% opt.3
+		return hwnd
+	}
 	__Get(){
-		Gui,% this.win ":Submit",Nohide
-		m(hotkey)
-		for a,b in this.var
-			this.var[a]:=%a%
-		return this.var
+		return this.add()
 	}
 	current(win){
 		return GuiKeep.keep[win]
@@ -748,4 +752,33 @@ Winpos(){
 }
 Add_Radius_Constraint(){
 	top:=Top(),Deselect(),settings.under(top,"Radius",{Center:"RightThumb",Dead:1,Distance:5,Read:"RThumb",select:1,X:A_ScreenWidth/2,Y:A_ScreenHeight/2}),lv(2)
+}
+Move(){
+	current:=ssn(program,"descendant::*[@tv='" TV_GetSelection() "']")
+	if(A_ThisHotkey="^Right"){
+		if(current.nodename~="i)KeyPress|Mouse|Radius"=0)
+			while,current:=current.ParentNode
+				if(current.nodename~="i)KeyPress|Mouse|Radius")
+					break
+		if(group:=sn(current,"following-sibling::Group").item[0])
+			deselect(),current.SetAttribute("select",1),group.AppendChild(current),lv(2)
+	}if(A_ThisHotkey="^Left"){
+		if(current.nodename~="i)KeyPress|Mouse|Radius"=0)
+			while,current:=current.ParentNode
+				if(current.nodename~="i)KeyPress|Mouse|Radius")
+					break
+		if(current.ParentNode.nodename!="Group")
+			return
+		parent:=current.ParentNode
+		if(parent.ParentNode.nodename="Alt")
+			deselect(),current.SetAttribute("select",1),parent.ParentNode.AppendChild(current),lv(2)
+	}if(A_ThisHotkey="^Up"){
+		if(!prev:=current.previoussibling)
+			return
+		deselect(),current.SetAttribute("select",1),prev.ParentNode.InsertBefore(current,prev),lv(2)
+	}if(A_ThisHotkey="^Down"){
+		if(!next:=current.nextsibling)
+			return
+		deselect(),current.SetAttribute("select",1),next.ParentNode.InsertBefore(next,current),lv(2)
+	}
 }
