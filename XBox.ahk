@@ -135,7 +135,7 @@ class xbox{
 			name:=ea.center?ea.center:ea.name
 			if(value:=xbox.buttonstate&xbox.buttons[name])
 				return xbox.buttonstate&value?name:""
-			if(xbox.triggers[name])
+			if(number:=xbox.triggers[name])
 				if(NumGet(xbox.currentstate,xbox.triggers[name],"uchar")/255*10>2?1:0)
 					return NumGet(xbox.currentstate,value,"uchar")/255*10>2?name:0
 		}
@@ -201,8 +201,8 @@ class xbox{
 				val:=Round(NumGet(xbox.currentstate,xbox.axis[obj.axis],"short")/32767*10)
 				if(!check:=Abs(val)>3&&xbox.ad[SubStr(obj.axis,0),val>=0?1:2]=obj.direction?1:0)
 					return
-			}else if(obj.trigger&&obj.dead){
-				if(!check:=NumGet(xbox.currentstate,xbox.triggers[obj.trigger],"uchar")/255*10>obj.dead?1:0)
+			}else if(obj.trigger){
+				if(!check:=NumGet(xbox.currentstate,xbox.triggers[obj.trigger],"uchar")/255*10>3?1:0)
 					return
 			}
 			if(obj.read){
