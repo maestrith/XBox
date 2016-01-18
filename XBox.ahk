@@ -242,7 +242,8 @@ Exit(){
 	while,tt:=tv.item[A_Index-1]
 		tt.RemoveAttribute("tv")
 	WinGetPos,x,y,,,% hwnd([1])
-	if(pos:=winpos()).w
+	pos:=winpos()
+	if(pos.w)
 		settings.Add("gui",{pos:"x" x " y" y " w" pos.w " h" pos.h})
 	settings.save(1)
 	ExitApp
