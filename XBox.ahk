@@ -5,9 +5,7 @@ SetBatchLines,-1
 CoordMode,Mouse,Screen
 global settings,program,v:=[]
 settings:=new XML("settings"),v.gui:=[]
-new xbox(0)
-xbox.Edit()
-Gui()
+new xbox(0),xbox.Edit(),Gui()
 Add_Radius_Constraint(){
 	top:=Top(),Deselect(),settings.Under(top,"Radius",{Center:"RightThumb",Dead:1,Distance:5,Read:"RThumb",select:1,X:A_ScreenWidth/2,Y:A_ScreenHeight/2}),LV(2)
 }
