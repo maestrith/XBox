@@ -4,8 +4,20 @@ DetectHiddenWindows,On
 SetBatchLines,-1
 CoordMode,Mouse,Screen
 global settings,program,v:=[]
+if((A_PtrSize=8&&A_IsCompiled="")||!A_IsUnicode){
+	SplitPath,A_AhkPath,,dir
+	if(!FileExist(correct:=dir "\AutoHotkeyU32.exe")){
+		m("Requires AutoHotkey 1.1 to run")
+		ExitApp
+	}
+	Run,"%correct%" "%A_ScriptName%",%A_ScriptDir%
+	ExitApp
+	return
+}
 settings:=new XML("settings"),v.gui:=[]
-new xbox(0),xbox.Edit(),Gui()
+new xbox(0)
+xbox.Edit()
+Gui()
 Add_Radius_Constraint(){
 	top:=Top(),Deselect(),settings.Under(top,"Radius",{Center:"RightThumb",Dead:1,Distance:5,Read:"RThumb",select:1,X:A_ScreenWidth/2,Y:A_ScreenHeight/2}),LV(2)
 }
