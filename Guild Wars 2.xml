@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<game name="Guild Wars 2" expand="1">
+	<DirectInput name="Direct Input" on="1"></DirectInput>
+	<Alt main="1" name="Main" expand="1">
+		<Group name="Mouse" expand="1">
+			<KeyPress Key="LButton" expand="1">
+				<Button Button="Y"></Button></KeyPress>
+			<KeyPress Key="RButton" expand="1">
+				<Button Button="B"></Button></KeyPress>
+			<Mouse expand="1">
+				<Read Read="LThumb" expand="1">
+					<Dead Dead="2.5"></Dead>
+					<Speed Speed="4"></Speed></Read></Mouse></Group>
+		<Group name="Movement">
+			<Group name="Interface">
+				<KeyPress Key="F" expand="1">
+					<Button Button="X"></Button></KeyPress>
+				<KeyPress Key="Escape" expand="1">
+					<Button Button="Start"></Button></KeyPress>
+				<KeyPress Key="M" expand="1">
+					<Button Button="Back"></Button></KeyPress>
+				<KeyPress Key="Space" expand="1">
+					<Button Button="A"></Button></KeyPress></Group>
+			<KeyPress Key="R">
+				<Button Button="Up"></Button></KeyPress>
+			<KeyPress Key="A" expand="1">
+				<Button Button="Left"></Button></KeyPress>
+			<KeyPress Key="S" expand="1">
+				<Button Button="Down"></Button></KeyPress>
+			<KeyPress Key="D" expand="1">
+				<Button Button="Right"></Button></KeyPress>
+			<KeyPress Key="Q" expand="1">
+				<Trigger Trigger="LTrigger" expand="1">
+					<Dead Dead="4"></Dead></Trigger></KeyPress>
+			<KeyPress Key="E" expand="1">
+				<Trigger Trigger="RTrigger" expand="1">
+					<Dead Dead="4"></Dead></Trigger></KeyPress>
+			<KeyPress Key="1" expand="1">
+				<Axis Axis="RThumbX" expand="1">
+					<Direction Direction="Left"></Direction></Axis></KeyPress>
+			<KeyPress Key="2" expand="1">
+				<Axis Axis="RThumbY" expand="1">
+					<Direction Direction="Down"></Direction></Axis></KeyPress>
+			<KeyPress Key="3" expand="1">
+				<Axis Axis="RThumbX" expand="1">
+					<Direction Direction="Right"></Direction></Axis></KeyPress>
+			<KeyPress Key="4" expand="1">
+				<Axis Axis="RThumbY" expand="1">
+					<Direction Direction="Up"></Direction></Axis></KeyPress>
+			<KeyPress Key="5" expand="1">
+				<Button Button="RightThumb"></Button></KeyPress></Group>
+		<KeyPress Key="Tab" expand="1">
+			<Button Button="LeftThumb"></Button></KeyPress></Alt>
+	<Alt name="LeftShoulder">
+		<KeyPress Key="6" expand="1">
+			<Axis Axis="RThumbX" expand="1">
+				<Direction Direction="Left"></Direction></Axis></KeyPress>
+		<KeyPress Key="7" expand="1">
+			<Axis Axis="RThumbY" expand="1">
+				<Direction Direction="Down"></Direction></Axis></KeyPress>
+		<KeyPress Key="8" expand="1">
+			<Axis Axis="RThumbX" expand="1">
+				<Direction Direction="Right"></Direction></Axis></KeyPress>
+		<KeyPress Key="9" expand="1">
+			<Axis Axis="RThumbY" expand="1">
+				<Direction Direction="Up"></Direction></Axis></KeyPress>
+		<KeyPress Key="0" expand="1">
+			<Button Button="RightThumb"></Button></KeyPress></Alt>
+	<Alt name="RightShoulder">
+		<Mouse expand="1">
+			<Read Read="RThumb" expand="1">
+				<Dead Dead="2.5"></Dead>
+				<Speed Speed="8"></Speed>
+				<Hold Hold="RButton"></Hold></Read></Mouse>
+		<KeyPress Key="M" expand="1">
+			<Button Button="Back"></Button></KeyPress></Alt></game>

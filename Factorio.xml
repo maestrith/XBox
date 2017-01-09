@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<game name="Factorio" expand="1" VisFirst="1" last="1">
+	<DirectInput name="Direct Input" on="0"></DirectInput>
+	<Alt name="Main" main="1" expand="1">
+		<Mouse expand="1">
+			<Read Read="RThumb">
+				<Dead Dead="2.5"></Dead>
+				<Speed Speed="6"></Speed></Read></Mouse>
+		<Group name="Interface" expand="1">
+			<KeyPress Key="Escape">
+				<Button Button="Back"></Button></KeyPress>
+			<KeyPress Key="R">
+				<Button Button="LeftShoulder"></Button></KeyPress></Group>
+		<Group name="Inventory" expand="1">
+			<KeyPress Key="E">
+				<Button Button="Y"></Button></KeyPress>
+			<KeyPress Key="Q">
+				<Button Button="B"></Button></KeyPress>
+			<KeyPress Key="F">
+				<Button Button="Start"></Button></KeyPress>
+			<KeyPress Key="1">
+				<Axis Axis="LThumbX">
+					<Direction Direction="Left"></Direction></Axis></KeyPress>
+			<KeyPress Key="2">
+				<Axis Axis="LThumbY">
+					<Direction Direction="Down"></Direction></Axis></KeyPress>
+			<KeyPress Key="3">
+				<Axis Axis="LThumbX">
+					<Direction Direction="Right"></Direction></Axis></KeyPress>
+			<KeyPress Key="4">
+				<Axis Axis="LThumbY">
+					<Direction Direction="Up"></Direction></Axis></KeyPress>
+			<KeyPress Key="5">
+				<Button Button="LeftThumb"></Button></KeyPress>
+			<KeyPress Key="X">
+				<Button Button="RightThumb"></Button></KeyPress></Group>
+		<Group name="Mouse" expand="1">
+			<KeyPress Key="LButton">
+				<Button Button="X"></Button></KeyPress>
+			<KeyPress Key="RButton">
+				<Button Button="A"></Button></KeyPress>
+			<KeyPress Key="MButton">
+				<Trigger Trigger="LTrigger">
+					<Dead Dead="5"></Dead></Trigger></KeyPress></Group>
+		<Group name="Movement" expand="1">
+			<KeyPress Key="W">
+				<Button Button="Up"></Button></KeyPress>
+			<KeyPress Key="A">
+				<Button Button="Left"></Button></KeyPress>
+			<KeyPress Key="S">
+				<Button Button="Down"></Button></KeyPress>
+			<KeyPress Key="D">
+				<Button Button="Right"></Button></KeyPress></Group>
+		<KeyPress Key="LButton" expand="1">
+			<Trigger Trigger="RTrigger">
+				<Dead Dead="4"></Dead></Trigger>
+			<Hold Hold="Control"></Hold></KeyPress></Alt>
+	<Alt name="RightShoulder" expand="1">
+		<Group name="Inventory" expand="1">
+			<KeyPress Key="1">
+				<Hold Hold="Shift"></Hold>
+				<Axis Axis="LThumbX">
+					<Direction Direction="Left"></Direction></Axis></KeyPress>
+			<KeyPress Key="2">
+				<Hold Hold="Shift"></Hold>
+				<Axis Axis="LThumbY">
+					<Direction Direction="Down"></Direction></Axis></KeyPress>
+			<KeyPress Key="3">
+				<Hold Hold="Shift"></Hold>
+				<Axis Axis="LThumbX">
+					<Direction Direction="Right"></Direction></Axis></KeyPress>
+			<KeyPress Key="4">
+				<Hold Hold="Shift"></Hold>
+				<Axis Axis="LThumbY">
+					<Direction Direction="Up"></Direction></Axis></KeyPress>
+			<KeyPress Key="5">
+				<Hold Hold="Shift"></Hold>
+				<Button Button="LeftThumb"></Button></KeyPress></Group>
+		<KeyPress Key="WheelUp" expand="1">
+			<Button Button="Y"></Button></KeyPress>
+		<KeyPress Key="WheelDown" expand="1">
+			<Button Button="B"></Button></KeyPress></Alt></game>
